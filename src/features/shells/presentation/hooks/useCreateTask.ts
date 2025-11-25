@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { CreateTaskUseCase } from '@/features/profile/application/CreateTaskUseCase';
-import { FirebaseTaskRepository } from '@/features/profile/infrastructure/FirebaseTaskRepository';
+import { CreateTaskUseCase } from '@/features/shells/application/CreateTaskUseCase';
+import { FirebaseTaskRepository } from '@/features/shells/infrastructure/FirebaseTaskRepository';
 
 const taskRepository = new FirebaseTaskRepository();
 const createTaskUseCase = new CreateTaskUseCase(taskRepository);

@@ -2,18 +2,16 @@
 
 import React, { useState, useMemo } from 'react';
 import { useProfile } from '@/features/profile/presentation/hooks/useProfile';
-import { useTasks } from '@/features/profile/presentation/hooks/useTasks';
 import { DashboardLayout } from '@/features/profile/presentation/components/DashboardLayout';
 import { useRouter } from 'next/navigation';
 import { ProfileHeader } from '@/features/profile/presentation/components/ProfileHeader';
 import { TabNavigation } from '@/features/profile/presentation/components/TabNavigation';
 import { ProfileShellGrid } from '@/features/profile/presentation/components/ProfileShellGrid';
 import { FollowersList } from '@/features/profile/presentation/components/FollowersList';
-import { ProfileTab, UserProfile, ShellCard, Task as PresentationTask, Category } from '@/features/profile/presentation/types';
+import { ProfileTab, UserProfile, ShellCard } from '@/features/profile/presentation/types';
 
 export default function ProfilePage() {
     const { user, loading: profileLoading, error: profileError } = useProfile();
-    const { tasks, loading: tasksLoading, error: tasksError } = useTasks(user?.id);
     const router = useRouter();
 
     const [activeTab, setActiveTab] = useState<ProfileTab>('daily-shells');
@@ -44,39 +42,11 @@ export default function ProfilePage() {
 
     // Map domain tasks to presentation tasks and shells
     const shells: ShellCard[] = useMemo(() => {
-        if (!tasks || !userProfile) return [];
+        if (!userProfile) return [];
 
-        const mappedTasks: PresentationTask[] = tasks.map(t => ({
-            id: t.id,
-            title: t.title,
-            time: '09:00', // Mock data
-            duration: 30, // Mock data
-            category: 'personal' as Category, // Mock data
-            icon: 'star', // Mock data
-            status: 'done', // Mock data
-            description: t.description,
-        }));
-
-        // Create a single shell for all tasks for now
-        const dailyShell: ShellCard = {
-            shell: {
-                id: 'shell-1',
-                userId: userProfile.id,
-                title: 'My Tasks',
-                date: new Date().toISOString().split('T')[0],
-                tasks: mappedTasks,
-                visibility: 'public',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            user: userProfile,
-            likes: 0,
-            isLiked: false,
-            comments: 0,
-        };
-
-        return [dailyShell];
-    }, [tasks, userProfile]);
+        // Return empty shells for now as task management is moved
+        return [];
+    }, [userProfile]);
 
     const handleFollowClick = (userId: string) => {
         setFollowingMap((prev) => ({

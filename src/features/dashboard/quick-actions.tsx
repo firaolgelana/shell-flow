@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Plus, CalendarDays, Sparkles, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
-import { CreateTaskDialog } from '@/features/profile/presentation/components/CreateTaskDialog';
+import { CreateTaskDialog } from '@/features/shells/presentation/components/CreateTaskDialog';
 
 export function QuickActions() {
     const [createTaskOpen, setCreateTaskOpen] = useState(false);

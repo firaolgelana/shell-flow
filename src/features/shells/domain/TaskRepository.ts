@@ -14,6 +14,14 @@ export interface TaskRepository {
     getTasks(userId: string): Promise<Task[]>;
 
     /**
+     * Retrieves recent tasks for a specific user.
+     * @param userId The ID of the user.
+     * @param limitCount Maximum number of tasks to retrieve.
+     * @returns A promise that resolves to an array of Tasks.
+     */
+    getRecentTasks(userId: string, limitCount?: number): Promise<Task[]>;
+
+    /**
      * Creates a new task.
      * @param task The task to create.
      * @returns A promise that resolves when the task is created.

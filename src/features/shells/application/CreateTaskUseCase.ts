@@ -1,5 +1,5 @@
-import { Task } from '@/features/profile/domain/Task';
-import { TaskRepository } from '@/features/profile/domain/TaskRepository';
+import { Task } from '@/features/shells/domain/Task';
+import { TaskRepository } from '@/features/shells/domain/TaskRepository';
 
 /**
  * Use case for creating a new task.

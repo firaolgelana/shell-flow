@@ -7,7 +7,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { Calendar, Clock, Timer } from 'lucide-react';
-import { useCreateTask } from '../hooks/useCreateTask';
+import { useCreateTask } from '@/features/shells/presentation/hooks/useCreateTask';
 import { useAuth } from '@/features/auth/presentation/useAuth';
 
 interface CreateTaskDialogProps {
