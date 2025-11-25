@@ -8,4 +8,8 @@ export interface AuthRepository {
     sendEmailVerification(user: User): Promise<void>;
     observeAuthState(callback: (user: User | null) => void): () => void;
     getCurrentUser(): Promise<User | null>;
+    // Password management methods
+    linkPassword(password: string): Promise<void>;
+    updatePassword(currentPassword: string, newPassword: string): Promise<void>;
+    hasPasswordLinked(): Promise<boolean>;
 }

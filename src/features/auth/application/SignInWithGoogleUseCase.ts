@@ -6,10 +6,10 @@ export class SignInWithGoogleUseCase {
 
     async execute(): Promise<User> {
         const user = await this.authRepository.signInWithGoogle();
-        if (!user.emailVerified) {
-            await this.authRepository.signOut();
-            throw new Error("Please verify your email address before signing in.");
-        }
+        // if (!user.emailVerified) {
+        //     await this.authRepository.signOut();
+        //     throw new Error("Please verify your email address before signing in.");
+        // }
         return user;
     }
 }

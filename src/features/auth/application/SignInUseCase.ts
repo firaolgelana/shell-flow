@@ -6,10 +6,10 @@ export class SignInUseCase {
 
     async execute(email: string, password: string): Promise<User> {
         const user = await this.authRepository.signIn(email, password);
-        if (!user.emailVerified) {
-            await this.authRepository.signOut();
-            throw new Error("Please verify your email address before signing in.");
-        }
+        // if (!user.emailVerified) {
+        //     await this.authRepository.signOut();
+        //     throw new Error("Please verify your email address before signing in.");
+        // }
         return user;
     }
 }

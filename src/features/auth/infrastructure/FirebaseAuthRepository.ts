@@ -9,6 +9,10 @@ import {
     GoogleAuthProvider,
     updateProfile,
     sendEmailVerification,
+    EmailAuthProvider,
+    linkWithCredential,
+    updatePassword,
+    reauthenticateWithCredential,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebase/firebaseConfig';
@@ -161,5 +165,65 @@ export class FirebaseAuthRepository implements AuthRepository {
     async getCurrentUser(): Promise<User | null> {
         await auth.authStateReady();
         return auth.currentUser ? this.mapFirebaseUserToUser(auth.currentUser) : null;
+    }
+
+    async linkPassword(password: string): Promise<void> {
+        try {
+            if (!auth.currentUser) {
+                throw new AuthError('No authenticated user found');
+            }
+
+            // Check if user already has password linked
+            const hasPassword = await this.hasPasswordLinked();
+            if (hasPassword) {
+                throw new AuthError('Password is already linked to this account');
+            }
+
+            // Create email credential
+            const credential = EmailAuthProvider.credential(
+                auth.currentUser.email!,
+                password
+            );
+
+            // Link credential to current user
+            await linkWithCredential(auth.currentUser, credential);
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
+        try {
+            if (!auth.currentUser || !auth.currentUser.email) {
+                throw new AuthError('No authenticated user found');
+            }
+
+            // Reauthenticate user with current password
+            const credential = EmailAuthProvider.credential(
+                auth.currentUser.email,
+                currentPassword
+            );
+            await reauthenticateWithCredential(auth.currentUser, credential);
+
+            // Update to new password
+            await updatePassword(auth.currentUser, newPassword);
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    async hasPasswordLinked(): Promise<boolean> {
+        try {
+            if (!auth.currentUser) {
+                return false;
+            }
+
+            // Check if user has email/password provider
+            const providers = auth.currentUser.providerData.map(p => p.providerId);
+            return providers.includes('password');
+        } catch (error) {
+            console.error('Error checking password link status:', error);
+            return false;
+        }
     }
 }

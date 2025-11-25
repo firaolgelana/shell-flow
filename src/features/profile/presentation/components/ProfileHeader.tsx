@@ -20,9 +20,9 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     isFollowing = false,
 }) => {
     return (
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-card border-b border-border">
             {/* Banner */}
-            <div className="h-32 bg-gradient-to-r from-indigo-400 via-blue-400 to-purple-400"></div>
+            <div className="h-32 bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 dark:from-indigo-600 dark:via-blue-600 dark:to-purple-600"></div>
 
             {/* Profile Content */}
             <div className="px-4 py-6">
@@ -75,24 +75,21 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
                 {/* Stats */}
                 <div className="grid grid-cols-4 gap-4">
-                    <div className="bg-gray-50 rounded-lg p-4 text-center">
-                        <p className="text-2xl font-bold text-gray-900">{user.streakCount}</p>
-                        <p className="text-xs text-gray-600 flex items-center justify-center gap-1 mt-1">
-                            <Flame size={14} className="text-orange-500" />
-                            Day Streak
-                        </p>
+                    <div className="bg-muted rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold">{user.streakCount}</div>
+                        <div className="text-sm text-muted-foreground">Day Streak</div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-center">
-                        <p className="text-2xl font-bold text-gray-900">{user.followers}</p>
-                        <p className="text-xs text-gray-600 mt-1">Followers</p>
+                    <div className="bg-muted rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold">{user.followers}</div>
+                        <div className="text-sm text-muted-foreground">Followers</div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-center">
-                        <p className="text-2xl font-bold text-gray-900">{user.following}</p>
-                        <p className="text-xs text-gray-600 mt-1">Following</p>
+                    <div className="bg-muted rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold">{user.following}</div>
+                        <div className="text-sm text-muted-foreground">Following</div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-center">
-                        <p className="text-2xl font-bold text-gray-900">24</p>
-                        <p className="text-xs text-gray-600 mt-1">Shells</p>
+                    <div className="bg-muted rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold">24</div>
+                        <div className="text-sm text-muted-foreground">Shells</div>
                     </div>
                 </div>
             </div>

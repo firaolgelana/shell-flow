@@ -51,18 +51,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         if (!loading) {
-            // Redirect verified users away from auth pages
-            if (user && user.emailVerified && (pathname === '/sign-in' || pathname === '/sign-up')) {
-                router.push('/dashboard');
-            }
-
-            // Redirect unverified users to verification page
-            if (user && !user.emailVerified && (pathname.startsWith('/profile') || pathname.startsWith('/dashboard'))) {
+            // Redirect authenticated users away from auth pages
+            if (user && (pathname === '/sign-in' || pathname === '/sign-up')) {
                 router.push('/dashboard');
             }
 
             // Protect private routes from unauthenticated users
-            if (!user && (pathname.startsWith('/profile') || pathname === '/verify-email' || pathname.startsWith('/dashboard'))) {
+            if (!user && (pathname.startsWith('/profile') || pathname === '/verify-email' || pathname.startsWith('/dashboard') || pathname.startsWith('/settings'))) {
                 router.push('/sign-in');
             }
         }

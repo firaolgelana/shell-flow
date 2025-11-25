@@ -18,7 +18,7 @@ export function Navbar() {
     const { user, signOut } = useAuth();
 
     return (
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6">
+        <header className="flex h-16 items-center justify-between border-b bg-background px-6">
             <div className="flex w-full max-w-sm items-center gap-2">
                 <div className="relative w-full">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

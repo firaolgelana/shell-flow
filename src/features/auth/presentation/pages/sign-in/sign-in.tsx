@@ -64,7 +64,7 @@ function SignInContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-slate-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary mb-4">
@@ -78,7 +78,7 @@ function SignInContent() {
           <button
             onClick={handleGoogleSignIn}
             type="button"
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border bg-card hover:bg-slate-50 transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border bg-card hover:bg-accent transition-colors shadow-sm"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -113,7 +113,7 @@ function SignInContent() {
             onClick={() => setActiveTab("email")}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${activeTab === "email"
               ? "bg-primary text-primary-foreground shadow-md"
-              : "bg-card border border-border text-foreground hover:bg-slate-50"
+              : "bg-card border border-border text-foreground hover:bg-accent"
               }`}
           >
             <Mail className="w-4 h-4" />
@@ -123,7 +123,7 @@ function SignInContent() {
             onClick={() => setActiveTab("phone")}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-all ${activeTab === "phone"
               ? "bg-primary text-primary-foreground shadow-md"
-              : "bg-card border border-border text-foreground hover:bg-slate-50"
+              : "bg-card border border-border text-foreground hover:bg-accent"
               }`}
           >
             <Phone className="w-4 h-4" />

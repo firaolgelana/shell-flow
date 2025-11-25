@@ -26,6 +26,8 @@ export class FirebaseTaskRepository implements TaskRepository {
                 title: data.title,
                 description: data.description,
                 date: (data.date as Timestamp).toDate(),
+                startTime: data.startTime || '09:00',
+                duration: data.duration || 30,
                 userId: data.userId,
                 createdAt: (data.createdAt as Timestamp).toDate(),
             } as Task;
@@ -43,6 +45,8 @@ export class FirebaseTaskRepository implements TaskRepository {
             title: task.title,
             description: task.description,
             date: Timestamp.fromDate(task.date),
+            startTime: task.startTime,
+            duration: task.duration,
             userId: task.userId,
             createdAt: Timestamp.fromDate(task.createdAt),
         });

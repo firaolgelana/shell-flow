@@ -1,6 +1,6 @@
-'use client';
-
 import React from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Card } from '@/shared/components/ui/card'
 import { Button } from '@/shared/components/ui/button'
 import { User } from '@/features/auth/domain/User'
@@ -64,11 +64,11 @@ export function ProfileSidebar({ user, loading }: ProfileSidebarProps) {
 
             {/* Navigation */}
             <nav className="space-y-2">
-                <NavItem label="Dashboard" icon="📊" active />
-                <NavItem label="My Shells" icon="🐚" />
-                <NavItem label="Templates" icon="📋" />
-                <NavItem label="Activity" icon="📈" />
-                <NavItem label="Settings" icon="⚙️" />
+                <NavItem label="Dashboard" icon="📊" href="/dashboard" active />
+                <NavItem label="My Shells" icon="🐚" href="/shells" />
+                <NavItem label="Templates" icon="📋" href="/templates" />
+                <NavItem label="Activity" icon="📈" href="/activity" />
+                <NavItem label="Settings" icon="⚙️" href="/settings" />
             </nav>
 
             {/* Help Section */}
@@ -88,21 +88,40 @@ export function ProfileSidebar({ user, loading }: ProfileSidebarProps) {
 function NavItem({
     label,
     icon,
+    href,
     active = false,
 }: {
     label: string
     icon: string
+    href?: string
     active?: boolean
 }) {
-    return (
-        <button
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${active
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                }`}
-        >
+    const pathname = usePathname();
+    const isActive = href ? pathname === href : active;
+
+    const content = (
+        <>
             <span className="text-lg">{icon}</span>
             <span>{label}</span>
+        </>
+    );
+
+    const className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive
+            ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+            : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+        }`;
+
+    if (href) {
+        return (
+            <Link href={href} className={className}>
+                {content}
+            </Link>
+        );
+    }
+
+    return (
+        <button className={className}>
+            {content}
         </button>
-    )
+    );
 }

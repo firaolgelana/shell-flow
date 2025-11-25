@@ -88,7 +88,7 @@ export default function ProfilePage() {
     // Show error state
     if (profileError) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="text-red-500 text-xl">{profileError}</div>
             </div>
         );
@@ -96,7 +96,7 @@ export default function ProfilePage() {
 
     if (profileLoading || !userProfile) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="text-gray-500">Loading...</div>
             </div>
         );
@@ -104,7 +104,7 @@ export default function ProfilePage() {
 
     return (
         <DashboardLayout>
-            <div className="flex-1 min-h-screen bg-gray-50 pb-20 md:pb-0 overflow-y-auto">
+            <div className="flex-1 min-h-screen bg-background pb-20 md:pb-0 overflow-y-auto">
                 <ProfileHeader
                     user={userProfile}
                     isOwnProfile={true}

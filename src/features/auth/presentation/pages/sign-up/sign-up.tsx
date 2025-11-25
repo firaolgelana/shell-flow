@@ -87,7 +87,7 @@ export function SignUp() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-slate-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary mb-4">
@@ -101,7 +101,7 @@ export function SignUp() {
           <button
             onClick={handleGoogleSignIn}
             type="button"
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border bg-card hover:bg-slate-50 transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-border bg-card hover:bg-accent transition-colors shadow-sm"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path

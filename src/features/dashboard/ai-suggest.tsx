@@ -6,7 +6,7 @@ import { Button } from '@/shared/components/ui/button';
 
 export function AISuggest() {
     return (
-        <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-none shadow-sm">
+        <Card className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 dark:from-purple-500/20 dark:to-blue-500/20 border-purple-200 dark:border-purple-800 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2 text-purple-700">
                     <Sparkles className="h-4 w-4" />

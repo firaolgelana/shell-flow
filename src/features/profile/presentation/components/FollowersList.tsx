@@ -28,7 +28,7 @@ export const FollowersList: React.FC<FollowersListProps> = ({
             {users.map((user) => (
                 <div
                     key={user.id}
-                    className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between"
+                    className="bg-card border border-border rounded-lg p-4 flex items-center justify-between"
                 >
                     <div className="flex items-center gap-3">
                         <Avatar className="w-10 h-10">

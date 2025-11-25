@@ -14,7 +14,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
 
   return (
-    <div className="flex h-screen bg-[#f8f9fa]">
+    <div className="flex h-screen bg-background">
       {/* Sidebar - Hidden on mobile, visible on medium screens and up */}
       <div className="hidden md:block">
         <Sidebar />

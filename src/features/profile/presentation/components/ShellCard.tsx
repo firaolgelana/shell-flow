@@ -13,7 +13,7 @@ interface ShellCardProps {
 
 export const ShellCard: React.FC<ShellCardProps> = ({ card, onCopy, onLike }) => {
     return (
-        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+        <div className="bg-card border border-border rounded-lg p-4 mb-4">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">

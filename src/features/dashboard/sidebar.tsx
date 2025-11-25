@@ -32,7 +32,7 @@ export function Sidebar() {
     const { signOut } = useAuth();
 
     return (
-        <div className="flex h-full w-64 flex-col border-r bg-white">
+        <div className="flex h-full w-64 flex-col border-r bg-background">
             <div className="flex h-16 items-center border-b px-6">
                 <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl text-primary">
                     <span>ShellFlow</span>

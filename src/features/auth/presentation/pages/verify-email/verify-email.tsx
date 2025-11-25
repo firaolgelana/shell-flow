@@ -73,7 +73,7 @@ export function VerifyEmail() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-slate-50 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-background px-4">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
@@ -89,8 +89,8 @@ export function VerifyEmail() {
                     {message && (
                         <div
                             className={`p-3 text-sm rounded-lg flex items-center gap-2 ${message.type === "success"
-                                    ? "text-green-700 bg-green-50 border border-green-200"
-                                    : "text-red-700 bg-red-50 border border-red-200"
+                                ? "text-green-700 bg-green-50 border border-green-200"
+                                : "text-red-700 bg-red-50 border border-red-200"
                                 }`}
                         >
                             {message.type === "success" ? (
