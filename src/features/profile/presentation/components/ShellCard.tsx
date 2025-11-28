@@ -22,14 +22,14 @@ export const ShellCard: React.FC<ShellCardProps> = ({ card, onCopy, onLike }) =>
                         <AvatarFallback>{card.user.username.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="font-semibold text-gray-900">{card.user.username}</p>
-                        <p className="text-xs text-gray-500">@{card.user.username.toLowerCase()}</p>
+                        <p className="font-semibold text-foreground">{card.user.username}</p>
+                        <p className="text-xs text-muted-foreground">@{card.user.username.toLowerCase()}</p>
                     </div>
                 </div>
             </div>
 
             {/* Title */}
-            <h3 className="text-lg font-bold text-gray-900 mb-3">{card.shell.title}</h3>
+            <h3 className="text-lg font-bold text-foreground mb-3">{card.shell.title}</h3>
 
             {/* Timeline Preview */}
             <div className="mb-4">
@@ -38,7 +38,7 @@ export const ShellCard: React.FC<ShellCardProps> = ({ card, onCopy, onLike }) =>
 
             {/* Actions Row */}
             <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4 text-gray-500">
+                <div className="flex items-center gap-4 text-muted-foreground">
                     <button className="flex items-center gap-1 hover:text-red-500 transition" onClick={onLike}>
                         <Heart size={18} fill={card.isLiked ? 'currentColor' : 'none'} />
                         <span className="text-sm">{card.likes}</span>

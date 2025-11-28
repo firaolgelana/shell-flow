@@ -18,8 +18,8 @@ export class GetUserByUsernameUseCase {
             throw new Error('Username is required');
         }
 
-        // Normalize username to lowercase
-        const normalizedUsername = username.toLowerCase().trim();
+        // Use username exactly as provided (case-sensitive match)
+        const normalizedUsername = username.trim();
 
         return await this.userRepository.getUserByUsername(normalizedUsername);
     }

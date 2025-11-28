@@ -31,14 +31,14 @@ export const TimelinePreview: React.FC<TimelinePreviewProps> = ({ tasks, max = 3
                         </div>
                         {/* Task info */}
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
-                            <p className="text-xs text-gray-500">{task.time}</p>
+                            <p className="text-sm font-medium text-foreground truncate">{task.title}</p>
+                            <p className="text-xs text-muted-foreground">{task.time}</p>
                         </div>
                     </div>
                 );
             })}
             {tasks.length > max && (
-                <p className="text-xs text-gray-400 pl-5">+{tasks.length - max} more</p>
+                <p className="text-xs text-muted-foreground pl-5">+{tasks.length - max} more</p>
             )}
         </div>
     );
