@@ -15,7 +15,9 @@ import {
     doc,
     getDoc,
     updateDoc,
-    arrayUnion
+    arrayUnion,
+    serverTimestamp,
+    FieldValue
 } from 'firebase/firestore';
 
 export class FirebaseChatRepository implements ChatRepository {
@@ -99,10 +101,10 @@ export class FirebaseChatRepository implements ChatRepository {
                 participants: data.participants,
                 lastMessage: data.lastMessage ? {
                     ...data.lastMessage,
-                    createdAt: (data.lastMessage.createdAt as Timestamp).toDate()
+                    createdAt: data.lastMessage.createdAt ? (data.lastMessage.createdAt as Timestamp).toDate() : new Date()
                 } : undefined,
-                createdAt: (data.createdAt as Timestamp).toDate(),
-                updatedAt: (data.updatedAt as Timestamp).toDate(),
+                createdAt: data.createdAt ? (data.createdAt as Timestamp).toDate() : new Date(),
+                updatedAt: data.updatedAt ? (data.updatedAt as Timestamp).toDate() : new Date(),
                 participantDetails
             });
         }
@@ -122,21 +124,22 @@ export class FirebaseChatRepository implements ChatRepository {
             participants: data.participants,
             lastMessage: data.lastMessage ? {
                 ...data.lastMessage,
-                createdAt: (data.lastMessage.createdAt as Timestamp).toDate()
+                createdAt: data.lastMessage.createdAt ? (data.lastMessage.createdAt as Timestamp).toDate() : new Date()
             } : undefined,
-            createdAt: (data.createdAt as Timestamp).toDate(),
-            updatedAt: (data.updatedAt as Timestamp).toDate(),
+            createdAt: data.createdAt ? (data.createdAt as Timestamp).toDate() : new Date(),
+            updatedAt: data.updatedAt ? (data.updatedAt as Timestamp).toDate() : new Date(),
         };
     }
 
     async sendMessage(chatRoomId: string, senderId: string, content: string): Promise<void> {
         const messagesRef = collection(db, this.chatRoomsCollection, chatRoomId, this.messagesCollection);
-        const now = Timestamp.now();
+        // Use serverTimestamp for consistent ordering across devices
+        const timestamp = serverTimestamp();
 
         const newMessage = {
             senderId,
             content,
-            createdAt: now,
+            createdAt: timestamp,
             chatRoomId
         };
 
@@ -146,7 +149,7 @@ export class FirebaseChatRepository implements ChatRepository {
         const chatRoomRef = doc(db, this.chatRoomsCollection, chatRoomId);
         await updateDoc(chatRoomRef, {
             lastMessage: newMessage,
-            updatedAt: now
+            updatedAt: timestamp
         });
     }
 
@@ -161,7 +164,8 @@ export class FirebaseChatRepository implements ChatRepository {
                 id: doc.id,
                 senderId: data.senderId,
                 content: data.content,
-                createdAt: (data.createdAt as Timestamp).toDate(),
+                // Handle pending writes where timestamp might be null
+                createdAt: data.createdAt ? (data.createdAt as Timestamp).toDate() : new Date(),
                 chatRoomId: data.chatRoomId
             };
         });
@@ -178,7 +182,8 @@ export class FirebaseChatRepository implements ChatRepository {
                     id: doc.id,
                     senderId: data.senderId,
                     content: data.content,
-                    createdAt: (data.createdAt as Timestamp).toDate(),
+                    // Handle pending writes where timestamp might be null
+                    createdAt: data.createdAt ? (data.createdAt as Timestamp).toDate() : new Date(),
                     chatRoomId: data.chatRoomId
                 };
             });
