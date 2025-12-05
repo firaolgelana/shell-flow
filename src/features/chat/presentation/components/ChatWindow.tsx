@@ -25,6 +25,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatRoomId }) => {
     const sendMessage = new SendMessage(chatRepository);
 
     useEffect(() => {
+        // Initial fetch
+        getMessages.execute(chatRoomId).then(setMessages).catch(err => console.error("Failed to load initial messages", err));
+
         const unsubscribe = getMessages.subscribe(chatRoomId, (msgs) => {
             setMessages(msgs);
         });
@@ -44,6 +47,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatRoomId }) => {
         try {
             await sendMessage.execute(chatRoomId, currentUser.id, newMessage);
             setNewMessage('');
+            // Manually refresh to ensure UI updates immediately
+            const updatedMessages = await getMessages.execute(chatRoomId);
+            setMessages(updatedMessages);
         } catch (error) {
             console.error("Failed to send message", error);
         }

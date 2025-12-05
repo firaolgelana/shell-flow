@@ -18,9 +18,9 @@ interface Task {
 Deno.serve(async (req) => {
   // Create a Supabase client with the Auth context of the logged in user.
   const supabase = createClient(
-    Deno.env.get('https://xwxihepzobxawdrftwbj.supabase.co') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  )
+    Deno.env.get('SUPABASE_URL') ?? 'https://xwxihepzobxawdrftwbj.supabase.co',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3eGloZXB6b2J4YXdkcmZ0d2JqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDg0NDIzOCwiZXhwIjoyMDgwNDIwMjM4fQ.mojUd0OJCMAJFUmp7zNGeFApRhx_t7eX6OWi34twqWY'
+)
 
   const now = new Date();
   const fifteenMinutesFromNow = addMinutes(now, 15);

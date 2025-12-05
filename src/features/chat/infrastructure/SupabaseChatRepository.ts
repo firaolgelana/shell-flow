@@ -39,44 +39,65 @@ export class SupabaseChatRepository implements ChatRepository {
 
         if (error) throw error;
 
+        // Get all participants for these rooms using RPC to bypass RLS recursion
+        const { data: allParticipants, error: participantsError } = await supabase.rpc('get_chat_participants', {
+            room_ids: roomIds
+        });
+
+        if (participantsError) throw participantsError;
+
+        // Collect all unique user IDs to fetch profiles (excluding current user)
+        const participantUserIds = new Set<string>();
+        allParticipants?.forEach(p => {
+            if (p.user_id !== userId) {
+                participantUserIds.add(p.user_id);
+            }
+        });
+
+        // Fetch all relevant profiles in one go
+        const { data: profiles, error: profilesError } = await supabase
+            .from(this.usersTable)
+            .select('*')
+            .in('id', Array.from(participantUserIds));
+
+        if (profilesError) throw profilesError;
+
+        // Create a map of user profiles for easy lookup
+        const profilesMap = new Map<string, User>();
+        profiles?.forEach(p => {
+            profilesMap.set(p.id, {
+                id: p.id,
+                email: p.email,
+                displayName: p.display_name,
+                photoURL: p.photo_url,
+                emailVerified: false,
+                username: p.username,
+                bio: p.bio,
+            } as User);
+        });
+
         const chatRooms: ChatRoom[] = [];
 
         for (const room of rooms) {
-            // Get all participants for this room
-            const { data: roomParticipants } = await supabase
-                .from('chat_participants')
-                .select('user_id')
-                .eq('chat_room_id', room.id);
+            // Get participants for this specific room
+            const roomParticipantIds = allParticipants
+                ?.filter(p => p.chat_room_id === room.id)
+                .map(p => p.user_id) || [];
 
-            const participantIds = roomParticipants?.map(p => p.user_id) || [];
-
-            // Fetch participant details (excluding current user)
+            // Map profiles
             const participantDetails: User[] = [];
-            for (const pId of participantIds) {
+            for (const pId of roomParticipantIds) {
                 if (pId !== userId) {
-                    const { data: userData } = await supabase
-                        .from(this.usersTable)
-                        .select('*')
-                        .eq('id', pId)
-                        .single();
-
-                    if (userData) {
-                        participantDetails.push({
-                            id: userData.id,
-                            email: userData.email,
-                            displayName: userData.display_name,
-                            photoURL: userData.photo_url,
-                            emailVerified: false,
-                            username: userData.username,
-                            bio: userData.bio,
-                        } as User);
+                    const userProfile = profilesMap.get(pId);
+                    if (userProfile) {
+                        participantDetails.push(userProfile);
                     }
                 }
             }
 
             chatRooms.push({
                 id: room.id,
-                participants: participantIds,
+                participants: roomParticipantIds,
                 lastMessage: room.last_message ? {
                     ...room.last_message,
                     createdAt: new Date(room.last_message.createdAt),

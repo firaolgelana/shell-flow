@@ -60,6 +60,10 @@ export const UserList: React.FC<UserListProps> = ({ onChatCreated }) => {
             onChatCreated(chatRoomId);
         } catch (error) {
             console.error("Failed to create chat room", error);
+            if (error && typeof error === 'object' && 'message' in error) {
+                console.error("Error message:", (error as any).message);
+            }
+            console.error("Full error:", JSON.stringify(error, null, 2));
         }
     };
 
