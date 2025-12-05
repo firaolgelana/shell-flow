@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { User } from '../domain/User';
 import { ObserveAuthStateUseCase } from '../application/ObserveAuthStateUseCase';
-import { authRepository } from '../infrastructure/firebase';
+import { authRepository } from '../infrastructure';
 
 import { SignOutUseCase } from '../application/SignOutUseCase';
 

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { UpdateProfileUseCase } from '../../application/UpdateProfileUseCase';
-import { FirebaseUserRepository } from '../../infrastructure/FirebaseUserRepository';
+import { userRepository } from '../../infrastructure';
 
-const userRepository = new FirebaseUserRepository();
 const updateProfileUseCase = new UpdateProfileUseCase(userRepository);
 
 export function useUpdateProfile() {

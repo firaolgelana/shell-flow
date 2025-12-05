@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FirebaseFollowRepository } from '../../infrastructure/FirebaseFollowRepository';
+import { followRepository } from '../../infrastructure';
 import { GetFollowStatsUseCase, FollowStats } from '../../application/GetFollowStatsUseCase';
 
-const followRepository = new FirebaseFollowRepository();
 const getFollowStatsUseCase = new GetFollowStatsUseCase(followRepository);
 
 export function useFollowStats(userId: string | undefined) {

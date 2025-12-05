@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { User } from '@/features/auth/domain/User';
 import { GetFollowingWithDetailsUseCase } from '@/features/social/application/GetFollowingWithDetailsUseCase';
-import { FirebaseFollowRepository } from '@/features/social/infrastructure/FirebaseFollowRepository';
-import { FirebaseUserRepository } from '@/features/profile/infrastructure/FirebaseUserRepository';
+import { followRepository } from '@/features/social/infrastructure';
+import { userRepository } from '@/features/profile/infrastructure';
 
-const followRepository = new FirebaseFollowRepository();
-const userRepository = new FirebaseUserRepository();
 const getFollowingUseCase = new GetFollowingWithDetailsUseCase(followRepository, userRepository);
 
 /**

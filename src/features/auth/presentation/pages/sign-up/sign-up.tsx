@@ -9,7 +9,7 @@ import { Input } from "../../../../../shared/components/ui/input";
 import Link from "next/link"
 import { SignUpUseCase } from "../../../application/SignUpUseCase";
 import { SignInWithGoogleUseCase } from "../../../application/SignInWithGoogleUseCase";
-import { authRepository } from "../../../infrastructure/firebase";
+import { authRepository } from "../../../infrastructure";
 
 export function SignUp() {
   const [showPassword, setShowPassword] = useState(false)

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Task } from '@/features/shells/domain/Task';
 import { GetDailyTasksUseCase } from '@/features/shells/application/GetDailyTasksUseCase';
-import { FirebaseTaskRepository } from '@/features/shells/infrastructure/FirebaseTaskRepository';
+import { taskRepository } from '@/features/shells/infrastructure';
 
-const taskRepository = new FirebaseTaskRepository();
 const getDailyTasksUseCase = new GetDailyTasksUseCase(taskRepository);
 
 /**

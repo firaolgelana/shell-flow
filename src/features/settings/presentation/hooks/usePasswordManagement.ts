@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { authRepository } from '@/features/auth/infrastructure/firebase';
+import { authRepository } from '@/features/auth/infrastructure';
 import { LinkPasswordUseCase } from '../../application/LinkPasswordUseCase';
 import { UpdatePasswordUseCase } from '../../application/UpdatePasswordUseCase';
 import { CheckPasswordLinkedUseCase } from '../../application/CheckPasswordLinkedUseCase';

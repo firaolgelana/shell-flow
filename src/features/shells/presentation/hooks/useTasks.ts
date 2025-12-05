@@ -3,9 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Task } from '@/features/shells/domain/Task';
 import { GetTasksUseCase } from '@/features/shells/application/GetTasksUseCase';
-import { FirebaseTaskRepository } from '@/features/shells/infrastructure/FirebaseTaskRepository';
-
-const taskRepository = new FirebaseTaskRepository();
+import { taskRepository } from '@/features/shells/infrastructure';
 const getTasksUseCase = new GetTasksUseCase(taskRepository);
 
 export function useTasks(userId: string | undefined) {
@@ -30,6 +28,12 @@ export function useTasks(userId: string | undefined) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to load tasks';
             setError(errorMessage);
             console.error('Error loading tasks:', err);
+            if (err && typeof err === 'object' && 'details' in err) {
+                console.error('Error details:', (err as any).details);
+            }
+            if (err && typeof err === 'object' && 'hint' in err) {
+                console.error('Error hint:', (err as any).hint);
+            }
         } finally {
             setLoading(false);
         }

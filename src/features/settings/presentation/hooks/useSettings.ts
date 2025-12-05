@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Settings } from '../../domain/Settings';
-import { FirebaseSettingsRepository } from '../../infrastructure/FirebaseSettingsRepository';
+import { settingsRepository } from '../../infrastructure';
 import { GetUserSettingsUseCase } from '../../application/GetUserSettingsUseCase';
 import { UpdateUserSettingsUseCase } from '../../application/UpdateUserSettingsUseCase';
-
-const settingsRepository = new FirebaseSettingsRepository();
 
 export function useSettings(userId: string | undefined) {
     const [settings, setSettings] = useState<Settings | null>(null);

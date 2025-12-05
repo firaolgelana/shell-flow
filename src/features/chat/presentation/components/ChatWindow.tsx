@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Message } from '@/features/chat/domain/Message';
 import { GetMessages } from '@/features/chat/application/GetMessages';
 import { SendMessage } from '@/features/chat/application/SendMessage';
-import { FirebaseChatRepository } from '@/features/chat/infrastructure/FirebaseChatRepository';
+import { chatRepository } from '@/features/chat/infrastructure';
 import { useAuth } from '@/features/auth/presentation/useAuth';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
@@ -21,7 +21,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatRoomId }) => {
     const { user: currentUser } = useAuth();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const chatRepository = new FirebaseChatRepository();
     const getMessages = new GetMessages(chatRepository);
     const sendMessage = new SendMessage(chatRepository);
 

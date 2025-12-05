@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avat
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { useAuth } from '@/features/auth/presentation/useAuth';
-import { FirebaseChatRepository } from '@/features/chat/infrastructure/FirebaseChatRepository';
+import { chatRepository } from '@/features/chat/infrastructure';
 import { formatDistanceToNow } from 'date-fns';
 
 interface ChatRoomListProps {
@@ -19,7 +19,6 @@ export const ChatRoomList: React.FC<ChatRoomListProps> = ({ onChatSelected, acti
     const [loading, setLoading] = useState(false);
     const { user: currentUser } = useAuth();
 
-    const chatRepository = new FirebaseChatRepository();
     const getChatRooms = new GetChatRooms(chatRepository);
 
     useEffect(() => {
@@ -31,6 +30,13 @@ export const ChatRoomList: React.FC<ChatRoomListProps> = ({ onChatSelected, acti
                 setChatRooms(rooms);
             } catch (error) {
                 console.error("Failed to fetch chat rooms", error);
+                if (error && typeof error === 'object') {
+                    console.error('Error details:', JSON.stringify(error, null, 2));
+                    if ('message' in error) console.error('Error message:', (error as any).message);
+                    if ('code' in error) console.error('Error code:', (error as any).code);
+                    if ('details' in error) console.error('Error details:', (error as any).details);
+                    if ('hint' in error) console.error('Error hint:', (error as any).hint);
+                }
             } finally {
                 setLoading(false);
             }

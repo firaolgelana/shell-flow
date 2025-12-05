@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { FirebaseFollowRepository } from '../../infrastructure/FirebaseFollowRepository';
+import { followRepository } from '../../infrastructure';
 import { FollowUserUseCase } from '../../application/FollowUserUseCase';
 import { UnfollowUserUseCase } from '../../application/UnfollowUserUseCase';
 import { GetFollowStatsUseCase, FollowStats } from '../../application/GetFollowStatsUseCase';
 
-const followRepository = new FirebaseFollowRepository();
 const followUserUseCase = new FollowUserUseCase(followRepository);
 const unfollowUserUseCase = new UnfollowUserUseCase(followRepository);
 const getFollowStatsUseCase = new GetFollowStatsUseCase(followRepository);

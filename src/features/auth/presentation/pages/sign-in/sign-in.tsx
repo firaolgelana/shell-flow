@@ -10,7 +10,7 @@ import { Input } from "../../../../../shared/components/ui/input";
 import Link from "next/link"
 import { SignInUseCase } from "../../../application/SignInUseCase";
 import { SignInWithGoogleUseCase } from "../../../application/SignInWithGoogleUseCase";
-import { authRepository } from "../../../infrastructure/firebase";
+import { authRepository } from "../../../infrastructure";
 
 import { Suspense } from "react"
 

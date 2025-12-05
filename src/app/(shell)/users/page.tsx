@@ -6,8 +6,7 @@ import { Search } from 'lucide-react';
 import { UserCard } from '@/features/social/presentation/components/UserCard';
 import { User } from '@/features/auth/domain/User';
 import { useAuth } from '@/features/auth/presentation/useAuth';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/features/auth/infrastructure/firebase/firebaseConfig';
+import { chatRepository } from '@/features/chat/infrastructure';
 
 export default function UsersPage() {
     const { user: currentUser } = useAuth();
@@ -18,21 +17,7 @@ export default function UsersPage() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const usersRef = collection(db, 'users');
-                const querySnapshot = await getDocs(usersRef);
-
-                const fetchedUsers: User[] = querySnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    return {
-                        id: doc.id,
-                        email: data.email,
-                        displayName: data.displayName || undefined,
-                        photoURL: data.photoURL || undefined,
-                        emailVerified: data.emailVerified || false,
-                        username: data.username || undefined,
-                        bio: data.bio || undefined,
-                    };
-                });
+                const fetchedUsers = await chatRepository.getAllUsers();
 
                 // Filter out the current user
                 const filteredUsers = fetchedUsers.filter(user => user.id !== currentUser?.id);

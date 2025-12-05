@@ -1,1 +1,0 @@
-export { app, auth, db, analytics } from "@/shared/config/firebase";

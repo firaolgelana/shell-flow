@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation"
 import { Mail, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react"
 import { Button } from "../../../../../shared/components/ui/button"
 import { useAuth } from "../../AuthProvider"
-import { authRepository } from "../../../infrastructure/firebase"
-import { auth } from "../../../infrastructure/firebase/firebaseConfig"
+import { authRepository } from "../../../infrastructure"
 
 export function VerifyEmail() {
     const [isResending, setIsResending] = useState(false)
@@ -47,20 +46,9 @@ export function VerifyEmail() {
         setMessage(null)
 
         try {
-            // Reload the current user to get fresh emailVerified status
-            await auth.currentUser?.reload()
-
-            // Get the updated user state
-            const updatedUser = auth.currentUser
-
-            if (updatedUser?.emailVerified) {
-                setMessage({ type: "success", text: "Email verified! Redirecting..." })
-                setTimeout(() => {
-                    router.push("/profile")
-                }, 1500)
-            } else {
-                setMessage({ type: "error", text: "Email not verified yet. Please check your inbox and click the verification link." })
-            }
+            // TODO: Implement Supabase email verification check
+            // Supabase handles email verification differently via magic links
+            setMessage({ type: "error", text: "Please check your email and click the verification link. The page will auto-refresh once verified." })
         } catch (err) {
             if (err instanceof Error) {
                 setMessage({ type: "error", text: err.message })

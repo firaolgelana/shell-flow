@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { User } from '@/features/auth/domain/User';
 import { GetUserByUsernameUseCase } from '@/features/profile/application/GetUserByUsernameUseCase';
-import { FirebaseUserRepository } from '@/features/profile/infrastructure/FirebaseUserRepository';
+import { userRepository } from '@/features/profile/infrastructure';
 
-const userRepository = new FirebaseUserRepository();
 const getUserByUsernameUseCase = new GetUserByUsernameUseCase(userRepository);
 
 /**

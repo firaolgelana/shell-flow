@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@/features/auth/domain/User';
 import { GetUserProfileUseCase } from '@/features/profile/application/GetUserProfileUseCase';
-import { FirebaseAuthRepository } from '@/features/auth/infrastructure/FirebaseAuthRepository';
+import { authRepository } from '@/features/auth/infrastructure';
 
 /**
  * Hook to fetch and manage the user profile.
@@ -15,8 +15,7 @@ export const useProfile = () => {
     const fetchProfile = useCallback(async () => {
         try {
             setLoading(true);
-            const authRepo = new FirebaseAuthRepository();
-            const getUserProfileUseCase = new GetUserProfileUseCase(authRepo);
+            const getUserProfileUseCase = new GetUserProfileUseCase(authRepository);
             const currentUser = await getUserProfileUseCase.execute();
             setUser(currentUser);
             setError(null);

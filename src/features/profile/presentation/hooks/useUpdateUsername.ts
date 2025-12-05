@@ -2,10 +2,9 @@
 
 import { useState, useCallback } from 'react';
 import { UpdateUsernameUseCase } from '@/features/profile/application/UpdateUsernameUseCase';
-import { FirebaseUserRepository } from '@/features/profile/infrastructure/FirebaseUserRepository';
+import { userRepository } from '@/features/profile/infrastructure';
 import { validateUsername } from '@/features/profile/utils/usernameValidation';
 
-const userRepository = new FirebaseUserRepository();
 const updateUsernameUseCase = new UpdateUsernameUseCase(userRepository);
 
 /**

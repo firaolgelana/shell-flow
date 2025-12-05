@@ -6,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avat
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { useAuth } from '@/features/auth/presentation/useAuth';
-import { FirebaseChatRepository } from '@/features/chat/infrastructure/FirebaseChatRepository';
-import { FirebaseFollowRepository } from '@/features/social/infrastructure/FirebaseFollowRepository';
+import { chatRepository } from '@/features/chat/infrastructure';
+import { followRepository } from '@/features/social/infrastructure';
 
 interface UserListProps {
     onChatCreated: (chatRoomId: string) => void;
@@ -19,8 +19,6 @@ export const UserList: React.FC<UserListProps> = ({ onChatCreated }) => {
     const { user: currentUser } = useAuth();
 
     // Dependency injection
-    const chatRepository = new FirebaseChatRepository();
-    const followRepository = new FirebaseFollowRepository();
     const getAllUsers = new GetAllUsers(chatRepository);
     const createChatRoom = new CreateChatRoom(chatRepository);
 

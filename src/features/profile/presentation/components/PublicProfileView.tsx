@@ -15,9 +15,7 @@ import { useWeeklyTasks } from '../hooks/useWeeklyTasks';
 import { useFollowers } from '../hooks/useFollowers';
 import { useFollowing } from '../hooks/useFollowing';
 import { useProfile } from '../hooks/useProfile';
-import { FirebaseFollowRepository } from '@/features/social/infrastructure/FirebaseFollowRepository';
-
-const followRepository = new FirebaseFollowRepository();
+import { followRepository } from '@/features/social/infrastructure';
 
 interface PublicProfileViewProps {
     user: User;

@@ -3,9 +3,8 @@
 import { useState, useCallback } from 'react';
 import { Task } from '@/features/shells/domain/Task';
 import { UpdateTaskStatusUseCase } from '@/features/shells/application/UpdateTaskStatusUseCase';
-import { FirebaseTaskRepository } from '@/features/shells/infrastructure/FirebaseTaskRepository';
+import { taskRepository } from '@/features/shells/infrastructure';
 
-const taskRepository = new FirebaseTaskRepository();
 const updateTaskStatusUseCase = new UpdateTaskStatusUseCase(taskRepository);
 
 export function useUpdateTaskStatus() {

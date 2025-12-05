@@ -2,10 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { CreateTaskUseCase } from '@/features/shells/application/CreateTaskUseCase';
-import { FirebaseTaskRepository } from '@/features/shells/infrastructure/FirebaseTaskRepository';
-import { Task } from '@/features/shells/domain/Task';
-
-const taskRepository = new FirebaseTaskRepository();
+import { taskRepository } from '@/features/shells/infrastructure';
 const createTaskUseCase = new CreateTaskUseCase(taskRepository);
 
 export function useCreateTask() {
