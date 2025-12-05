@@ -4,7 +4,7 @@ import { UserRepository } from '@/features/profile/domain/UserRepository';
 import { supabase } from '@/shared/config/supabase';
 
 export class SupabaseUserRepository implements UserRepository {
-    private tableName = 'users';
+    private tableName = 'profiles';
 
     private mapSupabaseUserToUser(data: any): User {
         return {

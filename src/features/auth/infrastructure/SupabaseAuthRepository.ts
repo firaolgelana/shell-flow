@@ -32,7 +32,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     private async saveUserToDatabase(user: User): Promise<void> {
         try {
             const { error } = await supabase
-                .from('users')
+                .from('profiles')
                 .upsert({
                     id: user.id,
                     email: user.email,
@@ -139,7 +139,7 @@ export class SupabaseAuthRepository implements AuthRepository {
                 let user = this.mapSupabaseUserToUser(session.user);
                 // Fetch additional data from 'users' table
                 const { data: userData } = await supabase
-                    .from('users')
+                    .from('profiles')
                     .select('username, bio')
                     .eq('id', user.id)
                     .single();
@@ -162,7 +162,7 @@ export class SupabaseAuthRepository implements AuthRepository {
 
         let user = this.mapSupabaseUserToUser(supabaseUser);
         const { data: userData } = await supabase
-            .from('users')
+            .from('profiles')
             .select('username, bio')
             .eq('id', user.id)
             .single();

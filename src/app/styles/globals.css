@@ -10,7 +10,7 @@ body,
     height: 100%; /* Ensure the element takes the full viewport height */
     margin: 0;
     padding: 0;
-    overflow: hidden; /* THIS is the key to prevent the main scrollbar */
+    /* overflow: hidden; THIS is the key to prevent the main scrollbar */
     overscroll-behavior-y: contain; /* Optional, helps prevent 'pull-to-refresh' behavior */
 }
 

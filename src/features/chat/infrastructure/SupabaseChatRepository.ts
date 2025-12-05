@@ -10,64 +10,12 @@ export class SupabaseChatRepository implements ChatRepository {
     private usersTable = 'profiles';
 
     async createChatRoom(participants: string[]): Promise<string> {
-        const sortedParticipants = [...participants].sort();
-
-        // Check if a chat room with these exact participants already exists
-        const { data: existingParticipants, error: searchError } = await supabase
-            .from('chat_participants')
-            .select('chat_room_id');
-
-        if (!searchError && existingParticipants) {
-            // Group by chat_room_id
-            const roomParticipants = new Map<string, string[]>();
-            for (const p of existingParticipants) {
-                if (!roomParticipants.has(p.chat_room_id)) {
-                    roomParticipants.set(p.chat_room_id, []);
-                }
-            }
-
-            // Get full participant lists for each room
-            for (const roomId of roomParticipants.keys()) {
-                const { data: roomParts } = await supabase
-                    .from('chat_participants')
-                    .select('user_id')
-                    .eq('chat_room_id', roomId);
-
-                if (roomParts) {
-                    const userIds = roomParts.map(p => p.user_id).sort();
-                    if (userIds.length === sortedParticipants.length &&
-                        userIds.every((val, idx) => val === sortedParticipants[idx])) {
-                        return roomId;
-                    }
-                }
-            }
-        }
-
-        // Create new chat room
-        const { data, error } = await supabase
-            .from(this.chatRoomsTable)
-            .insert({
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-            })
-            .select('id')
-            .single();
+        const { data, error } = await supabase.rpc('create_chat_room', {
+            participant_ids: participants
+        });
 
         if (error) throw error;
-
-        // Insert participants
-        const participantInserts = participants.map(userId => ({
-            chat_room_id: data.id,
-            user_id: userId,
-        }));
-
-        const { error: participantsError } = await supabase
-            .from('chat_participants')
-            .insert(participantInserts);
-
-        if (participantsError) throw participantsError;
-
-        return data.id;
+        return data;
     }
 
     async getChatRooms(userId: string): Promise<ChatRoom[]> {

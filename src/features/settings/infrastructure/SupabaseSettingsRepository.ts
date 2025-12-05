@@ -3,7 +3,7 @@ import { SettingsRepository } from '../domain/SettingsRepository';
 import { Settings, SecuritySettings, NotificationSettings, UserPreferences } from '../domain/Settings';
 
 export class SupabaseSettingsRepository implements SettingsRepository {
-    private tableName = 'user_settings';
+    private tableName = 'settings';
 
     private getDefaultSettings(userId: string): Settings {
         return {
@@ -41,9 +41,22 @@ export class SupabaseSettingsRepository implements SettingsRepository {
 
         return {
             userId: data.user_id,
-            security: data.security,
-            notifications: data.notifications,
-            preferences: data.preferences,
+            security: {
+                hasPasswordLinked: false, // Not stored in settings table
+                twoFactorEnabled: false,
+                emailVerified: false,
+            },
+            notifications: {
+                emailNotifications: data.email_notifications,
+                pushNotifications: data.push_notifications,
+                taskReminders: data.task_reminders,
+                weeklyDigest: data.weekly_digest,
+            },
+            preferences: {
+                theme: data.theme as 'light' | 'dark' | 'system',
+                language: data.language,
+                timezone: data.timezone,
+            },
             updatedAt: data.updated_at,
         };
     }
@@ -54,9 +67,18 @@ export class SupabaseSettingsRepository implements SettingsRepository {
             updated_at: new Date().toISOString(),
         };
 
-        if (settings.security) updateData.security = settings.security;
-        if (settings.notifications) updateData.notifications = settings.notifications;
-        if (settings.preferences) updateData.preferences = settings.preferences;
+        if (settings.notifications) {
+            if (settings.notifications.emailNotifications !== undefined) updateData.email_notifications = settings.notifications.emailNotifications;
+            if (settings.notifications.pushNotifications !== undefined) updateData.push_notifications = settings.notifications.pushNotifications;
+            if (settings.notifications.taskReminders !== undefined) updateData.task_reminders = settings.notifications.taskReminders;
+            if (settings.notifications.weeklyDigest !== undefined) updateData.weekly_digest = settings.notifications.weeklyDigest;
+        }
+
+        if (settings.preferences) {
+            if (settings.preferences.theme !== undefined) updateData.theme = settings.preferences.theme;
+            if (settings.preferences.language !== undefined) updateData.language = settings.preferences.language;
+            if (settings.preferences.timezone !== undefined) updateData.timezone = settings.preferences.timezone;
+        }
 
         const { error } = await supabase
             .from(this.tableName)
