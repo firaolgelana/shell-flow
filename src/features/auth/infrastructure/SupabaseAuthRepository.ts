@@ -41,11 +41,21 @@ export class SupabaseAuthRepository implements AuthRepository {
                     updated_at: new Date().toISOString(),
                 }, { onConflict: 'id' });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase upsert error details:', JSON.stringify(error, null, 2));
+                // Do not throw, just log. We want to proceed to fetching if possible.
+                // throw error; 
+            } else {
+                console.log('User saved to database successfully');
+            }
         } catch (error) {
             console.error('Error saving user to database:', error);
+            // console.log('User object that failed to save:', user);
         }
     }
+
+    private currentUser: User | null = null;
+    private profileSynced = false;
 
     async signIn(email: string, password: string): Promise<User> {
         try {
@@ -135,25 +145,93 @@ export class SupabaseAuthRepository implements AuthRepository {
 
     observeAuthState(callback: (user: User | null) => void): () => void {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (session?.user) {
-                let user = this.mapSupabaseUserToUser(session.user);
-                // Fetch additional data from 'users' table
-                const { data: userData } = await supabase
-                    .from('profiles')
-                    .select('username, bio')
-                    .eq('id', user.id)
-                    .single();
+            console.log('Auth state change event:', event);
 
-                if (userData) {
-                    user = { ...user, ...userData };
+            // Ignore TOKEN_REFRESHED to prevent infinite loops of UI updates -> data fetch -> token refresh
+            if (event === 'TOKEN_REFRESHED') {
+                return;
+            }
+
+            if (session?.user) {
+                // Map session user to domain user
+                const newUser: User = {
+                    id: session.user.id,
+                    email: session.user.email!,
+                    emailVerified: !!session.user.email_confirmed_at,
+                    displayName: session.user.user_metadata?.full_name || session.user.user_metadata?.display_name,
+                    photoURL: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
+                    username: session.user.user_metadata?.username,
+                };
+
+                // Prevent unnecessary updates if user data hasn't changed
+                if (JSON.stringify(newUser) !== JSON.stringify(this.currentUser)) {
+                    console.log('User data changed. Diff:', {
+                        old: this.currentUser,
+                        new: newUser
+                    });
+                    this.currentUser = newUser;
+                    callback(newUser);
+                } else {
+                    console.log('User data unchanged, skipping callback');
                 }
-                callback(user);
+
+                // Background: Ensure user exists in profiles table and fetch extra data
+                // Only sync on SIGNED_IN or INITIAL_SESSION to avoid loops on token refresh
+                // AND only if we haven't synced yet for this session
+                if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && !this.profileSynced) {
+                    this.profileSynced = true;
+                    this.syncUserProfile(newUser, (updatedUser) => {
+                        if (updatedUser && JSON.stringify(updatedUser) !== JSON.stringify(this.currentUser)) {
+                            this.currentUser = updatedUser;
+                            callback(updatedUser);
+                        }
+                    });
+                }
             } else {
-                callback(null);
+                if (this.currentUser !== null) {
+                    this.currentUser = null;
+                    this.profileSynced = false; // Reset sync flag on sign out
+                    callback(null);
+                }
             }
         });
 
         return () => subscription.unsubscribe();
+    }
+
+    private async syncUserProfile(user: User, callback: (user: User | null) => void) {
+        try {
+            console.log('Starting profile sync for:', user.id);
+
+            // Use Server Action for reliable profile syncing
+            const { syncProfileAction } = await import('../actions/syncProfile');
+            const result = await syncProfileAction({
+                id: user.id,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL
+            });
+
+            if (!result.success) {
+                console.error('Profile sync failed on server:', result.error);
+                return;
+            }
+
+            const userData = result.profile;
+
+            if (userData) {
+                console.log('Profile data fetched from server:', userData);
+                // Map DB fields to User fields if necessary
+                const updatedUser = {
+                    ...user,
+                    username: userData.username,
+                    bio: userData.bio
+                };
+                callback(updatedUser);
+            }
+        } catch (error) {
+            console.error('Profile sync failed:', error);
+        }
     }
 
     async getCurrentUser(): Promise<User | null> {

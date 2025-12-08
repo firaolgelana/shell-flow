@@ -48,9 +48,13 @@ export const UserList: React.FC<UserListProps> = ({ onChatCreated }) => {
             }
         };
 
-        if (currentUser) {
-            fetchUsers();
-        }
+        const timer = setTimeout(() => {
+            if (currentUser) {
+                fetchUsers();
+            }
+        }, 500); // Delay fetch to allow session to stabilize
+
+        return () => clearTimeout(timer);
     }, [currentUser]);
 
     const handleUserClick = async (otherUserId: string) => {
@@ -85,7 +89,7 @@ export const UserList: React.FC<UserListProps> = ({ onChatCreated }) => {
                                 onClick={() => handleUserClick(user.id)}
                             >
                                 <Avatar className="h-10 w-10 mr-3">
-                                    <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
+                                    <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
                                     <AvatarFallback>{user.displayName?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                                 </Avatar>
                                 <div className="flex flex-col items-start">

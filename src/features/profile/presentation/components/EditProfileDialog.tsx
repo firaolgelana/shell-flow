@@ -33,9 +33,9 @@ export function EditProfileDialog({
     const { updateProfile, loading: profileLoading } = useUpdateProfile();
     const { updateUsername, validateFormat, checkAvailability, loading: usernameLoading } = useUpdateUsername();
 
-    const [bio, setBio] = useState(currentBio);
-    const [displayName, setDisplayName] = useState(currentDisplayName);
-    const [username, setUsername] = useState(currentUsername);
+    const [bio, setBio] = useState(currentBio || '');
+    const [displayName, setDisplayName] = useState(currentDisplayName || '');
+    const [username, setUsername] = useState(currentUsername || '');
     const [usernameValidation, setUsernameValidation] = useState<{
         isValid: boolean;
         error?: string;
@@ -45,9 +45,9 @@ export function EditProfileDialog({
 
     // Update local state when props change
     useEffect(() => {
-        setBio(currentBio);
-        setDisplayName(currentDisplayName);
-        setUsername(currentUsername);
+        setBio(currentBio || '');
+        setDisplayName(currentDisplayName || '');
+        setUsername(currentUsername || '');
     }, [currentBio, currentDisplayName, currentUsername, open]);
 
     // Validate username format and check availability

@@ -18,12 +18,12 @@ export const ShellCard: React.FC<ShellCardProps> = ({ card, onCopy, onLike }) =>
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                     <Avatar className="w-10 h-10">
-                        <AvatarImage src={card.user.avatar} alt={card.user.username} />
-                        <AvatarFallback>{card.user.username.charAt(0).toUpperCase()}</AvatarFallback>
+                        <AvatarImage src={card.user.avatar} alt={card.user.username || 'User'} />
+                        <AvatarFallback>{(card.user.username || 'U').charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="font-semibold text-foreground">{card.user.username}</p>
-                        <p className="text-xs text-muted-foreground">@{card.user.username.toLowerCase()}</p>
+                        <p className="font-semibold text-foreground">{card.user.username || 'User'}</p>
+                        <p className="text-xs text-muted-foreground">@{card.user.username?.toLowerCase() || 'user'}</p>
                     </div>
                 </div>
             </div>

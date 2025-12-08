@@ -42,7 +42,11 @@ export const ChatRoomList: React.FC<ChatRoomListProps> = ({ onChatSelected, acti
             }
         };
 
-        fetchChatRooms();
+        const timer = setTimeout(() => {
+            fetchChatRooms();
+        }, 500); // Delay fetch to allow session to stabilize
+
+        return () => clearTimeout(timer);
     }, [currentUser, refreshTrigger]);
 
     const getOtherParticipant = (room: ChatRoom) => {
@@ -72,7 +76,7 @@ export const ChatRoomList: React.FC<ChatRoomListProps> = ({ onChatSelected, acti
                                     onClick={() => onChatSelected(room.id)}
                                 >
                                     <Avatar className="h-12 w-12 mr-3">
-                                        <AvatarImage src={otherUser?.photoURL || ''} alt={otherUser?.displayName || 'User'} />
+                                        <AvatarImage src={otherUser?.photoURL || undefined} alt={otherUser?.displayName || 'User'} />
                                         <AvatarFallback>{otherUser?.displayName?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex flex-col items-start w-full overflow-hidden">

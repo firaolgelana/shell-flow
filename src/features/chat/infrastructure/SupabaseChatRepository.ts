@@ -37,7 +37,10 @@ export class SupabaseChatRepository implements ChatRepository {
             .in('id', roomIds)
             .order('updated_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+            console.error('SupabaseChatRepository: Error fetching chat rooms', error);
+            throw error;
+        }
 
         // Get all participants for these rooms using RPC to bypass RLS recursion
         const { data: allParticipants, error: participantsError } = await supabase.rpc('get_chat_participants', {
@@ -207,7 +210,10 @@ export class SupabaseChatRepository implements ChatRepository {
             .from(this.usersTable)
             .select('*');
 
-        if (error) throw error;
+        if (error) {
+            console.error('SupabaseChatRepository: Error fetching all users', error);
+            throw error;
+        }
 
         return data.map(user => ({
             id: user.id,

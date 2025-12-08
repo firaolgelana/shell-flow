@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL') ?? 'https://xwxihepzobxawdrftwbj.supabase.co',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3eGloZXB6b2J4YXdkcmZ0d2JqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDg0NDIzOCwiZXhwIjoyMDgwNDIwMjM4fQ.mojUd0OJCMAJFUmp7zNGeFApRhx_t7eX6OWi34twqWY'
-)
+  )
 
   const now = new Date();
   const fifteenMinutesFromNow = addMinutes(now, 15);
@@ -90,11 +90,10 @@ Deno.serve(async (req) => {
 async function processNotification(supabase: any, task: Task, deadline: Date, type: 'REMINDER' | 'OVERDUE') {
   try {
     // Fetch user email
-    // Assuming 'users' table or auth.users (requires admin)
-    // If using public.users table:
+    // Using 'profiles' table which contains display_name and email
     const { data: userData, error } = await supabase
-      .from('users')
-      .select('email, displayName')
+      .from('profiles')
+      .select('email, display_name')
       .eq('id', task.userId)
       .single();
 
@@ -115,7 +114,7 @@ async function processNotification(supabase: any, task: Task, deadline: Date, ty
         email: userData.email,
         taskTitle: task.title,
         deadline: format(deadline, "yyyy-MM-dd HH:mm"),
-        userName: userData.displayName || "User",
+        userName: userData.display_name || "User",
         taskId: task.id,
         notificationType: type
       })
