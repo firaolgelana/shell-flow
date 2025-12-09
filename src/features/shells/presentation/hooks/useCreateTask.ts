@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { CreateTaskUseCase } from '@/features/shells/application/CreateTaskUseCase';
 import { taskRepository } from '@/features/shells/infrastructure';
+import { Task } from '@/features/shells/domain/Task';
 const createTaskUseCase = new CreateTaskUseCase(taskRepository);
 
 export function useCreateTask() {
