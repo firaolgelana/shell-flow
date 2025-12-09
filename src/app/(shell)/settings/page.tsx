@@ -7,7 +7,8 @@ import { SecuritySettings } from '@/features/settings/presentation/components/Se
 import { AccountSettings } from '@/features/settings/presentation/components/AccountSettings';
 import { NotificationSettings } from '@/features/settings/presentation/components/NotificationSettings';
 import { ThemeSettings } from '@/features/settings/presentation/components/ThemeSettings';
-import { Shield, User, Bell, Palette } from 'lucide-react';
+import { PrivacySettings } from '@/features/settings/presentation/components/PrivacySettings';
+import { Shield, User, Bell, Palette, Eye } from 'lucide-react';
 
 export default function SettingsPage() {
     const { user, loading } = useAuth();
@@ -40,10 +41,14 @@ export default function SettingsPage() {
 
             {/* Settings Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-5">
                     <TabsTrigger value="security" className="flex items-center gap-2">
                         <Shield className="h-4 w-4" />
                         <span className="hidden sm:inline">Security</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="privacy" className="flex items-center gap-2">
+                        <Eye className="h-4 w-4" />
+                        <span className="hidden sm:inline">Privacy</span>
                     </TabsTrigger>
                     <TabsTrigger value="account" className="flex items-center gap-2">
                         <User className="h-4 w-4" />
@@ -61,6 +66,10 @@ export default function SettingsPage() {
 
                 <TabsContent value="security" className="space-y-6">
                     <SecuritySettings />
+                </TabsContent>
+
+                <TabsContent value="privacy" className="space-y-6">
+                    <PrivacySettings />
                 </TabsContent>
 
                 <TabsContent value="account" className="space-y-6">

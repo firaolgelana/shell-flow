@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User } from '@/features/auth/domain/User';
 import { GetFollowersWithDetailsUseCase } from '@/features/social/application/GetFollowersWithDetailsUseCase';
 import { followRepository } from '@/features/social/infrastructure';
@@ -15,28 +15,28 @@ export function useFollowers(userId: string | undefined) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
+    const fetchFollowers = useCallback(async () => {
         if (!userId) {
             setLoading(false);
             return;
         }
-
-        const fetchFollowers = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const fetchedFollowers = await getFollowersUseCase.execute(userId);
-                setFollowers(fetchedFollowers);
-            } catch (err) {
-                console.error('Error fetching followers:', err);
-                setError(err instanceof Error ? err.message : 'Failed to fetch followers');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchFollowers();
+        
+        try {
+            setLoading(true);
+            setError(null);
+            const fetchedFollowers = await getFollowersUseCase.execute(userId);
+            setFollowers(fetchedFollowers);
+        } catch (err) {
+            console.error('Error fetching followers:', err);
+            setError(err instanceof Error ? err.message : 'Failed to fetch followers');
+        } finally {
+            setLoading(false);
+        }
     }, [userId]);
 
-    return { followers, loading, error };
+    useEffect(() => {
+        fetchFollowers();
+    }, [fetchFollowers]);
+
+    return { followers, loading, error, refetch: fetchFollowers };
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Message } from '@/features/chat/domain/Message';
 import { GetMessages } from '@/features/chat/application/GetMessages';
 import { SendMessage } from '@/features/chat/application/SendMessage';
@@ -21,8 +21,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatRoomId }) => {
     const { user: currentUser } = useAuth();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const getMessages = new GetMessages(chatRepository);
-    const sendMessage = new SendMessage(chatRepository);
+    // Memoize use case instances to prevent recreation on every render
+    const getMessages = useMemo(() => new GetMessages(chatRepository), []);
+    const sendMessage = useMemo(() => new SendMessage(chatRepository), []);
 
     useEffect(() => {
         // Initial fetch
@@ -47,9 +48,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ chatRoomId }) => {
         try {
             await sendMessage.execute(chatRoomId, currentUser.id, newMessage);
             setNewMessage('');
-            // Manually refresh to ensure UI updates immediately
-            const updatedMessages = await getMessages.execute(chatRoomId);
-            setMessages(updatedMessages);
+            // Realtime subscription will handle the UI update automatically
         } catch (error) {
             console.error("Failed to send message", error);
         }

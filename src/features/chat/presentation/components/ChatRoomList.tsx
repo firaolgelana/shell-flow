@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ChatRoom } from '@/features/chat/domain/ChatRoom';
 import { GetChatRooms } from '@/features/chat/application/GetChatRooms';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
@@ -19,11 +19,15 @@ export const ChatRoomList: React.FC<ChatRoomListProps> = ({ onChatSelected, acti
     const [loading, setLoading] = useState(false);
     const { user: currentUser } = useAuth();
 
-    const getChatRooms = new GetChatRooms(chatRepository);
+    // Memoize use case instance to prevent recreation on every render
+    const getChatRooms = useMemo(() => new GetChatRooms(chatRepository), []);
 
     useEffect(() => {
+        if (!currentUser) return;
+
+        let unsubscribe: (() => void) | undefined;
+
         const fetchChatRooms = async () => {
-            if (!currentUser) return;
             setLoading(true);
             try {
                 const rooms = await getChatRooms.execute(currentUser.id);
@@ -44,10 +48,19 @@ export const ChatRoomList: React.FC<ChatRoomListProps> = ({ onChatSelected, acti
 
         const timer = setTimeout(() => {
             fetchChatRooms();
+            // Subscribe to realtime updates for chat rooms
+            unsubscribe = getChatRooms.subscribe(currentUser.id, (rooms) => {
+                setChatRooms(rooms);
+            });
         }, 500); // Delay fetch to allow session to stabilize
 
-        return () => clearTimeout(timer);
-    }, [currentUser, refreshTrigger]);
+        return () => {
+            clearTimeout(timer);
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, [currentUser, refreshTrigger, getChatRooms]);
 
     const getOtherParticipant = (room: ChatRoom) => {
         if (!currentUser || !room.participantDetails) return null;

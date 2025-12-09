@@ -71,4 +71,21 @@ export class SupabaseUserRepository implements UserRepository {
 
         if (error) throw error;
     }
+
+    async searchUsers(query: string): Promise<User[]> {
+        const searchTerm = `%${query.toLowerCase()}%`;
+
+        const { data, error } = await supabase
+            .from(this.tableName)
+            .select('*')
+            .or(`username.ilike.${searchTerm},display_name.ilike.${searchTerm},email.ilike.${searchTerm}`)
+            .limit(20);
+
+        if (error) {
+            console.error('Error searching users:', error);
+            throw error;
+        }
+
+        return (data || []).map(this.mapSupabaseUserToUser);
+    }
 }

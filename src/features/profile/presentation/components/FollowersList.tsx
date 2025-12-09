@@ -2,26 +2,95 @@ import React from 'react';
 import { UserProfile } from '../types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Button } from '@/shared/components/ui/button';
+import { Badge } from '@/shared/components/ui/badge';
 import Link from 'next/link';
+import { Users } from 'lucide-react';
 
 interface FollowersListProps {
     users: UserProfile[];
+    currentUserId?: string;
     onFollowClick?: (userId: string) => void;
+    /** Map of user IDs that the current user is following */
     isFollowingMap?: Record<string, boolean>;
+    /** Map of user IDs that are following the current user back */
+    isFollowedByMap?: Record<string, boolean>;
 }
 
 export const FollowersList: React.FC<FollowersListProps> = ({
     users,
+    currentUserId,
     onFollowClick,
     isFollowingMap = {},
+    isFollowedByMap = {},
 }) => {
     if (users.length === 0) {
         return (
             <div className="text-center py-12">
-                <p className="text-gray-600">No followers yet</p>
+                <p className="text-muted-foreground">No users to display</p>
             </div>
         );
     }
+
+    const getFollowStatus = (userId: string) => {
+        const isFollowing = isFollowingMap[userId];
+        const isFollowedBy = isFollowedByMap[userId];
+        
+        if (isFollowing && isFollowedBy) {
+            return 'friends';
+        } else if (isFollowing) {
+            return 'following';
+        } else {
+            return 'none';
+        }
+    };
+
+    const renderFollowButton = (userId: string) => {
+        // Don't show follow button for yourself
+        if (userId === currentUserId) {
+            return (
+                <Badge variant="outline" className="text-muted-foreground">
+                    You
+                </Badge>
+            );
+        }
+
+        const status = getFollowStatus(userId);
+
+        switch (status) {
+            case 'friends':
+                return (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onFollowClick?.(userId)}
+                        className="gap-1"
+                    >
+                        <Users className="h-3 w-3" />
+                        Friends
+                    </Button>
+                );
+            case 'following':
+                return (
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => onFollowClick?.(userId)}
+                    >
+                        Following
+                    </Button>
+                );
+            default:
+                return (
+                    <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => onFollowClick?.(userId)}
+                    >
+                        Follow
+                    </Button>
+                );
+        }
+    };
 
     return (
         <div className="space-y-4">
@@ -40,28 +109,21 @@ export const FollowersList: React.FC<FollowersListProps> = ({
                         <div>
                             {user.username ? (
                                 <Link href={`/${user.username}`}>
-                                    <h3 className="font-semibold text-gray-900 hover:text-indigo-600">
+                                    <h3 className="font-semibold text-foreground hover:text-primary transition-colors">
                                         {user.displayName || user.username}
                                     </h3>
                                 </Link>
                             ) : (
-                                <h3 className="font-semibold text-gray-900">
+                                <h3 className="font-semibold text-foreground">
                                     {user.displayName || 'Unknown User'}
                                 </h3>
                             )}
                             {user.username && (
-                                <p className="text-xs text-gray-500">@{user.username}</p>
+                                <p className="text-xs text-muted-foreground">@{user.username}</p>
                             )}
-                            <p className="text-sm text-gray-600">{user.followers} followers</p>
                         </div>
                     </div>
-                    <Button
-                        variant={isFollowingMap[user.id] ? 'secondary' : 'default'}
-                        size="sm"
-                        onClick={() => onFollowClick?.(user.id)}
-                    >
-                        {isFollowingMap[user.id] ? 'Following' : 'Follow'}
-                    </Button>
+                    {renderFollowButton(user.id)}
                 </div>
             ))}
         </div>

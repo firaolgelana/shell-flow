@@ -9,5 +9,6 @@ export interface ChatRepository {
     sendMessage(chatRoomId: string, senderId: string, content: string): Promise<void>;
     getMessages(chatRoomId: string): Promise<Message[]>;
     subscribeToMessages(chatRoomId: string, callback: (messages: Message[]) => void): () => void;
+    subscribeToChatRooms(userId: string, callback: (rooms: ChatRoom[]) => void): () => void;
     getAllUsers(): Promise<User[]>;
 }

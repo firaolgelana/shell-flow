@@ -3,6 +3,7 @@ import { ChatRoom } from '../domain/ChatRoom';
 import { Message } from '../domain/Message';
 import { User } from '@/features/auth/domain/User';
 import { supabase } from '@/shared/config/supabase';
+import { channelTracker } from '@/shared/config/supabaseChannels';
 
 export class SupabaseChatRepository implements ChatRepository {
     private chatRoomsTable = 'chat_rooms';
@@ -188,19 +189,110 @@ export class SupabaseChatRepository implements ChatRepository {
     }
 
     subscribeToMessages(chatRoomId: string, callback: (messages: Message[]) => void): () => void {
+        // Maintain internal state for incremental updates
+        let currentMessages: Message[] = [];
+        let isInitialized = false;
+        const channelName = `messages:${chatRoomId}`;
+
+        // Helper to map database row to Message
+        const mapRowToMessage = (row: any): Message => ({
+            id: row.id,
+            senderId: row.sender_id,
+            content: row.content,
+            createdAt: new Date(row.created_at),
+            chatRoomId: row.chat_room_id,
+        });
+
+        // Initial fetch to populate state
+        this.getMessages(chatRoomId).then(messages => {
+            currentMessages = messages;
+            isInitialized = true;
+            // Don't call callback here - component does its own initial fetch
+        }).catch(err => {
+            console.error('Failed to initialize message subscription state:', err);
+        });
+
         const channel = supabase
-            .channel(`messages:${chatRoomId}`)
+            .channel(channelName)
             .on('postgres_changes',
-                { event: '*', schema: 'public', table: this.messagesTable, filter: `chat_room_id=eq.${chatRoomId}` },
-                async () => {
-                    // Refetch all messages when there's a change
-                    const messages = await this.getMessages(chatRoomId);
-                    callback(messages);
+                { event: 'INSERT', schema: 'public', table: this.messagesTable, filter: `chat_room_id=eq.${chatRoomId}` },
+                (payload) => {
+                    if (!isInitialized) {
+                        // If not initialized yet, do a full fetch
+                        this.getMessages(chatRoomId).then(messages => {
+                            currentMessages = messages;
+                            isInitialized = true;
+                            callback(currentMessages);
+                        });
+                        return;
+                    }
+                    // Append new message
+                    const newMessage = mapRowToMessage(payload.new);
+                    // Avoid duplicates by checking if message already exists
+                    if (!currentMessages.some(m => m.id === newMessage.id)) {
+                        currentMessages = [...currentMessages, newMessage];
+                        callback(currentMessages);
+                    }
+                }
+            )
+            .on('postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: this.messagesTable, filter: `chat_room_id=eq.${chatRoomId}` },
+                (payload) => {
+                    if (!isInitialized) return;
+                    // Update existing message
+                    const updatedMessage = mapRowToMessage(payload.new);
+                    currentMessages = currentMessages.map(m => 
+                        m.id === updatedMessage.id ? updatedMessage : m
+                    );
+                    callback(currentMessages);
+                }
+            )
+            .on('postgres_changes',
+                { event: 'DELETE', schema: 'public', table: this.messagesTable, filter: `chat_room_id=eq.${chatRoomId}` },
+                (payload) => {
+                    if (!isInitialized) return;
+                    // Remove deleted message
+                    const deletedId = (payload.old as any).id;
+                    currentMessages = currentMessages.filter(m => m.id !== deletedId);
+                    callback(currentMessages);
                 }
             )
             .subscribe();
 
+        // Track channel for debugging
+        channelTracker.track(channelName, channel, 'ChatWindow');
+
         return () => {
+            channelTracker.untrack(channelName);
+            supabase.removeChannel(channel);
+        };
+    }
+
+    subscribeToChatRooms(userId: string, callback: (rooms: ChatRoom[]) => void): () => void {
+        const channelName = `chat_rooms:${userId}`;
+        
+        // Subscribe to chat_rooms table changes for rooms the user participates in
+        const channel = supabase
+            .channel(channelName)
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: this.chatRoomsTable },
+                async () => {
+                    // Refetch all chat rooms when there's a change (e.g., new message updates last_message)
+                    try {
+                        const rooms = await this.getChatRooms(userId);
+                        callback(rooms);
+                    } catch (error) {
+                        console.error('Error fetching chat rooms on realtime update:', error);
+                    }
+                }
+            )
+            .subscribe();
+
+        // Track channel for debugging
+        channelTracker.track(channelName, channel, 'ChatRoomList');
+
+        return () => {
+            channelTracker.untrack(channelName);
             supabase.removeChannel(channel);
         };
     }

@@ -30,4 +30,11 @@ export interface UserRepository {
      * Update user profile information (bio, displayName).
      */
     updateProfile(userId: string, data: { bio?: string; displayName?: string }): Promise<void>;
+
+    /**
+     * Search users by username or display name.
+     * @param query - The search query
+     * @returns Array of matching users
+     */
+    searchUsers(query: string): Promise<User[]>;
 }
