@@ -28,7 +28,7 @@ export class SupabasePrivacyRepository implements PrivacyRepository {
             if (error.code === 'PGRST116') {
                 return null;
             }
-            console.error('Error fetching privacy settings:', error);
+            console.error('Error fetching privacy settings:', JSON.stringify(error, null, 2));
             throw error;
         }
 
@@ -73,7 +73,7 @@ export class SupabasePrivacyRepository implements PrivacyRepository {
             });
 
         if (error) {
-            console.error('Error updating privacy settings:', error);
+            console.error('Error updating privacy settings:', JSON.stringify(error, null, 2));
             throw error;
         }
     }
@@ -219,7 +219,7 @@ export class SupabasePrivacyRepository implements PrivacyRepository {
 
         // The RPC returns an array with one row
         const result = Array.isArray(data) ? data[0] : data;
-        
+
         return {
             canViewProfile: result?.can_view_profile ?? false,
             canViewSchedule: result?.can_view_schedule ?? false,

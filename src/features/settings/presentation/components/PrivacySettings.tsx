@@ -75,7 +75,7 @@ export function PrivacySettings() {
                 const data = await getPrivacySettings.execute(user.id);
                 setSettings(data);
             } catch (error) {
-                console.error('Failed to load privacy settings:', error);
+                console.error('Failed to load privacy settings:', JSON.stringify(error, null, 2));
             } finally {
                 setLoading(false);
             }
